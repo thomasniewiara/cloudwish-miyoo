@@ -34,3 +34,17 @@ cfcae3083679de59d6600d4ba05676c654b6d24e
 Toolchain GCC: arm-linux-gnueabihf 8.3.0, 2019.03.
 Runtime link paths are established in run.sh. Actual Onion 4.3.1 runtime
 compatibility must still be verified on the target device.
+
+DISPLAY FIX 0.1.1
+Reference for 32-bit display setup in the user's OS version:
+https://github.com/OnionUI/Onion/blob/v4.3.1-1/src/common/utils/sdl_init.h
+Reference for library search order:
+https://github.com/OnionUI/Onion/blob/v4.3.1-1/static/build/.tmp_update/runtime.sh
+The game draws on its own software canvas and SDL blits it to the hardware
+surface. It does not write directly into framebuffer memory or assume its
+row stride. No private SDL library is shipped.
+
+Host display regression test (run from game's assets parent directory):
+Compile Source/test_display.c with the same host SDL flags as test_progression.
+Run SDL_VIDEODRIVER=dummy /path/to/test_display
+The test compares all RGB pixels of canvas and display across four views.

@@ -1,6 +1,22 @@
-CLOUDWISH KINGDOM — MIYOO DEMO 0.1
+CLOUDWISH KINGDOM — MIYOO DEMO 0.1.1
 Target: Miyoo Mini Plus, Onion OS 4.3.1
 Status: compiled ARM hardware-test build. NOT tested on a physical Miyoo.
+
+UPDATE FROM 0.1
+Shut down the Miyoo, then merge this package's Roms folder into the SD card.
+Replace cloudwish and run.sh when prompted. Do not delete the existing
+Cloudwish folder or its saves folder. This ZIP contains no saved games and
+uses the same save format. Relaunch the existing Cloudwish entry.
+
+DISPLAY FIX IN 0.1.1
+The first version could display diagonal, scrambled rows on the handheld.
+This revision requests a 32-bit hardware display, draws into a separate
+32-bit canvas and blits the complete frame before presenting it. It also
+uses Onion 4.3.1's native library search order instead of preferring the
+alternate Ports SDL library. The log now includes display size, bit depth,
+row pitch, SDL driver and loaded SDL paths.
+These address the suspected rendering mismatch. A physical-device retest
+is still needed to confirm the fix.
 
 INSTALL
 1. Shut down the Miyoo and put its SD card in your computer.
@@ -75,7 +91,8 @@ libm and libc supplied by the device/Onion. No third-party shared libraries
 are bundled. No overclock setting is enabled; the game caps at about 30 fps.
 Host tests passed for save roundtrip, malformed saves, bridge restrictions,
 all mission steps, creature gating, wrong spell point, undo and save/quit.
-Screen layouts were inspected through host SDL's dummy video driver.
+A pixel-by-pixel display-copy test passed on the host for the meadow, bridge,
+puzzle and pause views. Screen layouts were inspected through host SDL's dummy video driver.
 These checks do not prove that the binary runs on the physical handheld.
 
 References:

@@ -2,7 +2,7 @@
 
 Native SDL 1.2 game for **Miyoo Mini Plus / Onion OS 4.3.1**.
 
-Latest version in this snapshot: **v0.1**.
+Latest version in this snapshot: **v0.1.1**.
 
 ## Install
 Download the matching ZIP under [releases](releases/), extract it and merge its
