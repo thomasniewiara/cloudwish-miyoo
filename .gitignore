@@ -1,0 +1,4 @@
+**/saves/
+**/cloudwish.log
+*.tmp
+.DS_Store

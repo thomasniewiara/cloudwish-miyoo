@@ -1,0 +1,36 @@
+Build the native binary on Linux x86_64:
+1. Install the Miyoo toolchain from shauninman/union-miyoomini-toolchain.
+   This build used the archive:
+   https://github.com/shauninman/miyoomini-toolchain-buildroot/releases/download/v0.0.3/miyoomini-toolchain.tar.xz
+   Extract with tar --no-same-owner -xf miyoomini-toolchain.tar.xz -C /opt
+2. Run sh Source/build.sh from the package root.
+   Override MIYOO_TOOLCHAIN if installed somewhere other than
+   /opt/miyoomini-toolchain. SDL headers/libraries come with that toolchain.
+3. The output replaces Roms/PORTS/Games/Cloudwish/cloudwish.
+
+Assets are already prepared; Python is not needed to build or play.
+To regenerate assets from the original Cloudwish PNG folder, install Pillow
+and DejaVu Sans, then run python3 Source/prepare_assets.py /path/to/png/folder
+The four creature images originated in the user's Cloudwish game project.
+The meadow background and Pip are drawn procedurally for this demo.
+The bitmap font is derived from DejaVu Sans; license in FONT-LICENSE.txt.
+
+Desktop testing requires SDL 1.2 headers and libraries:
+cc -std=gnu99 -O2 -Wall -Wextra Source/cloudwish.c $(sdl-config --cflags --libs) -lm -o /tmp/cloudwish-host
+/tmp/cloudwish-host --self-test
+cc -std=gnu99 -O2 -Wall -Wextra Source/test_progression.c $(sdl-config --cflags --libs) -lm -o /tmp/cloudwish-test
+/tmp/cloudwish-test
+For a desktop run, change into Roms/PORTS/Games/Cloudwish before launching.
+Desktop keys mirror Onion SDL events:
+Arrows = D-pad; Space = A; Left Ctrl = B; Left Alt = Y;
+E/T = L1/R1; Tab/Backspace = L2/R2; Enter = START.
+Snapshot: SDL_VIDEODRIVER=dummy /tmp/cloudwish-host --screenshot /tmp/frame.bmp
+Optional snapshot arguments: mission index 0–7, then any word for puzzle view.
+
+Key mapping and Ports launcher reference inspected at Onion commit:
+07505ea58c7bba698d6b9220ff43946a43cac76b
+Toolchain repository commit:
+cfcae3083679de59d6600d4ba05676c654b6d24e
+Toolchain GCC: arm-linux-gnueabihf 8.3.0, 2019.03.
+Runtime link paths are established in run.sh. Actual Onion 4.3.1 runtime
+compatibility must still be verified on the target device.
