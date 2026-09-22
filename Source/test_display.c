@@ -6,8 +6,8 @@ int main(void){
  char *args[]={"cloudwish","--screenshot","/tmp/cloudwish-display-test.bmp",NULL};
  assert(game_main(3,args)==0);
  assert(screen!=video&&screen->format->BitsPerPixel==32&&video->format->BitsPerPixel==32);
- for(int phase=0;phase<4;phase++){
-  g.step=phase==0?0:phase==1?3:1;puzzle=phase==2;paused=phase==3;render();
+ for(int phase=0;phase<5;phase++){
+  g.step=phase==0?0:phase==1?3:1;puzzle=phase==2;paused=phase==3;shop=phase==4;render();
   assert(SDL_LockSurface(screen)==0);assert(SDL_LockSurface(video)==0);
   for(int y=0;y<480;y++)for(int x=0;x<640;x++){
    Uint32 a,b;Uint8 ar,ag,ab,br,bg,bb;

@@ -19,5 +19,12 @@
     "sha256": "0a88f1f00650fe4ca7f776fa6aa8745c0d3936616bc746a16688ab0a4fbb4f1a",
     "size_bytes": 70773,
     "provenance": "Original released ZIP recovered without modification"
+  },
+  {
+    "version": "0.2",
+    "archive": "releases/v0.2/Cloudwish-Miyoo-Demo-0.2.zip",
+    "sha256": "f14148b5f59bca2c9ddc4647bcd3bedc72d72bfcc40b9f7c793c81275db65255",
+    "size_bytes": 75138,
+    "provenance": "Original released ZIP recovered without modification"
   }
 ]

@@ -1,12 +1,27 @@
-CLOUDWISH KINGDOM — MIYOO DEMO 0.1.2
+CLOUDWISH KINGDOM — MIYOO DEMO 0.2
 Target: Miyoo Mini Plus, Onion OS 4.3.1
-Status: compiled ARM hardware-test build. NOT tested on a physical Miyoo.
+Status: new shop features tested on host. The prior 0.1.2 display, gameplay
+and saves were confirmed working by the user on their Miyoo; 0.2 still
+needs a device check.
 
-UPDATE FROM 0.1 / 0.1.1
+UPDATE FROM 0.1 / 0.1.1 / 0.1.2
 Shut down the Miyoo, then merge this package's Roms folder into the SD card.
 Replace cloudwish and run.sh when prompted. Do not delete the existing
 Cloudwish folder or its saves folder. This ZIP contains no saved games and
-uses the same save format. Relaunch the existing Cloudwish entry.
+reads your old save automatically. Relaunch the existing Cloudwish entry.
+Keep a backup of your saves folder if you want to return to an older build;
+older versions cannot read the new shop save format.
+
+NEW IN 0.2: THE CLOUD CLOSET
+Earn 10 stars per mission step (70 total). Older saves receive 10 stars
+for every step already completed, once. Press X while exploring, or visit
+the SHOP stall at the left of the meadow and press A.
+Choose with up/down, preview on another friend with L/R, and press A to
+buy and wear. B closes the shop. Purchases unlock the look for all four
+friends; each friend remembers its own outfit. Owned items are free to
+equip again. Original look removes the accessory.
+Rose bow: 10 stars. Sunshine crown: 15 stars. Sky scarf: 20 stars.
+All currency is earned in the game. Purchases/equipment save immediately.
 
 ORIENTATION FIX IN 0.1.2
 The native Miyoo display showed version 0.1.1 upside down. This update
@@ -41,6 +56,7 @@ PLAY
 D-pad    Walk; select numbered spell points
 A        Talk / use magic / connect selected spell point
 B        Undo last spell point; back out when no points are connected
+X        Open the shop while exploring
 Y        Hint; in a spell, select the next needed point
 L1/R1    Change creature (L2/R2 also supported)
 START    Pause / resume
@@ -48,7 +64,7 @@ Pause    D-pad to choose; A to confirm. Choose Save and quit to exit.
 
 Follow the golden mission marker. Move close, choose the creature named
 in the quest, and press A. Connect points 1–4 with A; use D-pad and B as
-needed. There are no timers, falling penalties, purchases or online features.
+needed. There are no timers, falling penalties, real-money purchases or online features.
 
 MISSION ROUTE
 Milo reveals the hidden stars. Luna makes the rainbow bridge. Cross its
@@ -58,13 +74,14 @@ brightens the sky. Visit Pip again after finishing for a happy greeting.
 
 WHAT IS INCLUDED
 Four original Cloudwish creature sprites, a simplified Rainbow Meadow,
-seven mission steps, four-point magic interactions and local progress saves.
+seven mission steps, four-point magic interactions, a shop and local saves.
 This is a small native adaptation, not the full browser game or a ROM file.
 Magic interactions share the same point-connection mechanic in this demo.
-The shop, outfits, other islands and audio are not included yet.
+The shop and three wearable accessories are included. Other islands and
+audio are not included yet.
 
 SAVES
-Autosaves after each completed mission and when using Save and quit.
+Autosaves after each completed mission, outfit purchase/equip, and Save and quit.
 Save file: Roms/PORTS/Games/Cloudwish/saves/slot1.txt
 Use Save and quit before turning off the device. Mid-puzzle progress is
 not saved. Browser saves and Onion emulator save states are separate.

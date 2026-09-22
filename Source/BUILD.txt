@@ -57,3 +57,12 @@ to the hardware display. Game coordinates and inputs are unchanged.
 Compile test_display.c with -DMIYOO_ROTATE_180 to check the handheld path.
 The regression checks every pixel in all four views against the expected
 180-degree mapping. Desktop builds without that define stay upright.
+
+SHOP UPDATE 0.2
+CW2 saves append stars, ownership bitmask and four equipped-item indices.
+CW1 import credits completed steps once; purchases and equipment write CW2.
+A failed purchase save rolls the in-memory transaction back. No saves are
+shipped. test_shop.c checks migration, currency, ownership, equipment,
+insufficient funds, repeat reward protection and failed-save rollback.
+Compile it with the same flags as test_progression.c. The display regression
+now also checks the shop with the handheld's 180-degree presentation.
