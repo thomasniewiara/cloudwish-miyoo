@@ -10,7 +10,7 @@
 
 typedef struct { int step,who; float x,y; } Save;
 static Save g={0,3,320,355};
-static SDL_Surface *video,*screen,*bg,*font,*creatures[4];
+static SDL_Surface *present,*video,*screen,*bg,*font,*creatures[4];
 static int running=1,puzzle=0,selected=0,linked=0,paused=0,menu=0,help=0,save_ok=1;
 static Uint32 message_until;
 static char message[80]="Welcome! Milo can reveal hidden stars.";
@@ -52,7 +52,20 @@ static void render(void){
  if(puzzle){box(35,100,570,294,65,58,104);text(62,112,g.step==1?"LUNA'S RAINBOW":g.step==5?"POPPY'S FLOWERS":g.step==4?"EMBER'S WARM LIGHT":"MILO'S STAR MAGIC");text(62,145,"Connect 1, 2, 3, 4 to cast your spell.");for(int i=1;i<linked;i++)line(nx[i-1],ny[i-1],nx[i],ny[i]);for(int i=0;i<4;i++){circle(nx[i],ny[i],25,i==selected?255:120,i==selected?229:120,i==selected?159:166);circle(nx[i],ny[i],19,i<linked?99:74,i<linked?177:65,130);char a[2]={(char)('1'+i),0};text(nx[i]-6,ny[i]-13,a);}text(62,342,"D-pad choose   A connect   B undo/back");}
  if(paused){box(70,115,500,250,58,51,91);text(105,130,"A LITTLE CLOUD BREAK");text(105,175,menu==0?"> Resume":"  Resume");text(105,212,menu==1?"> Controls":"  Controls");text(105,249,menu==2?"> Save and quit":"  Save and quit");text(105,306,save_ok?"Your missions save automatically.":"SAVE ERROR: check SD free space.");}
  if(help){box(35,100,570,294,58,51,91);text(60,120,"YOUR SKY ADVENTURE");text(60,163,"D-pad: walk / select spell points");text(60,195,"A: talk, help, or connect a point");text(60,227,"B: undo / back     Y: mission hint");text(60,259,"L/R: change magical creature");text(60,291,"START: pause      A or B: close");}
- if(SDL_BlitSurface(screen,NULL,video,NULL)<0||SDL_Flip(video)<0){
+ SDL_Surface *frame=screen;
+#ifdef MIYOO_ROTATE_180
+ /* The native Miyoo SDL scanout is inverted. Rotate the completed frame,
+    keeping logical drawing and input coordinates unchanged. Respect pitch. */
+ if(SDL_LockSurface(screen)<0){fprintf(stderr,"Canvas lock: %s\n",SDL_GetError());running=0;return;}
+ if(SDL_LockSurface(present)<0){SDL_UnlockSurface(screen);fprintf(stderr,"Present lock: %s\n",SDL_GetError());running=0;return;}
+ for(int y=0;y<480;y++){
+  const Uint32 *src=(const Uint32*)((const Uint8*)screen->pixels+y*screen->pitch);
+  Uint32 *dst=(Uint32*)((Uint8*)present->pixels+(479-y)*present->pitch);
+  for(int x=0;x<640;x++)dst[639-x]=src[x];
+ }
+ SDL_UnlockSurface(present);SDL_UnlockSurface(screen);frame=present;
+#endif
+ if(SDL_BlitSurface(frame,NULL,video,NULL)<0||SDL_Flip(video)<0){
   fprintf(stderr,"Present failed: %s\n",SDL_GetError());running=0;
  }
 }
@@ -64,11 +77,16 @@ video=SDL_SetVideoMode(640,480,32,SDL_HWSURFACE);
 if(!video){fprintf(stderr,"Video: %s\n",SDL_GetError());return 1;}
 screen=SDL_CreateRGBSurface(SDL_SWSURFACE,640,480,32,0x00ff0000,0x0000ff00,0x000000ff,0);
 if(!screen){fprintf(stderr,"Canvas: %s\n",SDL_GetError());return 1;}
+present=SDL_CreateRGBSurface(SDL_SWSURFACE,640,480,32,0x00ff0000,0x0000ff00,0x000000ff,0);
+if(!present){fprintf(stderr,"Presentation canvas: %s\n",SDL_GetError());return 1;}
+#ifdef MIYOO_ROTATE_180
+fprintf(stderr,"Presentation rotation: 180 degrees\n");
+#endif
 char driver[80]={0};SDL_VideoDriverName(driver,sizeof driver);
-fprintf(stderr,"Cloudwish 0.1.1 display fix; SDL driver=%s\n",driver);
+fprintf(stderr,"Cloudwish 0.1.2 orientation fix; SDL driver=%s\n",driver);
 fprintf(stderr,"Display: %dx%d bpp=%u pitch=%u flags=0x%lx\n",video->w,video->h,(unsigned)video->format->BitsPerPixel,(unsigned)video->pitch,(unsigned long)video->flags);
 fprintf(stderr,"Canvas: %dx%d bpp=%u pitch=%u\n",screen->w,screen->h,(unsigned)screen->format->BitsPerPixel,(unsigned)screen->pitch);
 FILE *maps=fopen("/proc/self/maps","r");if(maps){char linebuf[512];while(fgets(linebuf,sizeof linebuf,maps))if(strstr(linebuf,"libSDL"))fputs(linebuf,stderr);fclose(maps);}
 fflush(stderr);
 if(video->w!=640||video->h!=480||video->format->BitsPerPixel!=32||video->pitch<640*4){fprintf(stderr,"Unsupported display layout; expected 640x480 32-bit.\n");return 1;}
-SDL_ShowCursor(SDL_DISABLE);SDL_EnableKeyRepeat(0,0);bg=load("meadow",0);font=load("font",1);for(int i=0;i<4;i++){const char*n[]={"luna","poppy","ember","milo"};creatures[i]=load(n[i],1);}read_save("saves/slot1.txt",&g);if(!can_move(g.x,g.y)){g.x=320;g.y=355;}say("Welcome! Follow the glowing mission marker.");if(argc>2&&!strcmp(argv[1],"--screenshot")){if(argc>3){g.step=atoi(argv[3]);if(g.step<0||g.step>7)g.step=0;}if(argc>4)puzzle=1;render();SDL_SaveBMP(screen,argv[2]);return 0;}Uint32 last=SDL_GetTicks();while(running){Uint32 start=SDL_GetTicks();float dt=(start-last)/1000.f;if(dt>.05f)dt=.05f;last=start;SDL_Event e;while(SDL_PollEvent(&e)){if(e.type==SDL_QUIT){save();running=0;}else if(e.type==SDL_KEYDOWN)key(e.key.keysym.sym);else if(e.type==SDL_ACTIVEEVENT&&!e.active.gain)save();}if(!paused&&!help&&!puzzle){Uint8*k=SDL_GetKeyState(NULL);float dx=k[SDLK_RIGHT]-k[SDLK_LEFT],dy=k[SDLK_DOWN]-k[SDLK_UP];if(dx&&dy){dx*=.7071f;dy*=.7071f;}float x=g.x+dx*125*dt,y=g.y+dy*125*dt;if(can_move(x,g.y))g.x=x;if(can_move(g.x,y))g.y=y;}render();Uint32 elapsed=SDL_GetTicks()-start;if(elapsed<33)SDL_Delay(33-elapsed);}for(int i=0;i<4;i++)SDL_FreeSurface(creatures[i]);SDL_FreeSurface(bg);SDL_FreeSurface(font);SDL_FreeSurface(screen);return 0;}
+SDL_ShowCursor(SDL_DISABLE);SDL_EnableKeyRepeat(0,0);bg=load("meadow",0);font=load("font",1);for(int i=0;i<4;i++){const char*n[]={"luna","poppy","ember","milo"};creatures[i]=load(n[i],1);}read_save("saves/slot1.txt",&g);if(!can_move(g.x,g.y)){g.x=320;g.y=355;}say("Welcome! Follow the glowing mission marker.");if(argc>2&&!strcmp(argv[1],"--screenshot")){if(argc>3){g.step=atoi(argv[3]);if(g.step<0||g.step>7)g.step=0;}if(argc>4)puzzle=1;render();SDL_SaveBMP(screen,argv[2]);return 0;}Uint32 last=SDL_GetTicks();while(running){Uint32 start=SDL_GetTicks();float dt=(start-last)/1000.f;if(dt>.05f)dt=.05f;last=start;SDL_Event e;while(SDL_PollEvent(&e)){if(e.type==SDL_QUIT){save();running=0;}else if(e.type==SDL_KEYDOWN)key(e.key.keysym.sym);else if(e.type==SDL_ACTIVEEVENT&&!e.active.gain)save();}if(!paused&&!help&&!puzzle){Uint8*k=SDL_GetKeyState(NULL);float dx=k[SDLK_RIGHT]-k[SDLK_LEFT],dy=k[SDLK_DOWN]-k[SDLK_UP];if(dx&&dy){dx*=.7071f;dy*=.7071f;}float x=g.x+dx*125*dt,y=g.y+dy*125*dt;if(can_move(x,g.y))g.x=x;if(can_move(g.x,y))g.y=y;}render();Uint32 elapsed=SDL_GetTicks()-start;if(elapsed<33)SDL_Delay(33-elapsed);}for(int i=0;i<4;i++)SDL_FreeSurface(creatures[i]);SDL_FreeSurface(bg);SDL_FreeSurface(font);SDL_FreeSurface(screen);SDL_FreeSurface(present);return 0;}

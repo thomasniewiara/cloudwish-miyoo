@@ -48,3 +48,12 @@ Host display regression test (run from game's assets parent directory):
 Compile Source/test_display.c with the same host SDL flags as test_progression.
 Run SDL_VIDEODRIVER=dummy /path/to/test_display
 The test compares all RGB pixels of canvas and display across four views.
+
+ORIENTATION FIX 0.1.2
+The Miyoo build now defines MIYOO_ROTATE_180 to correct the upside-down
+native SDL output reported on the user's device. A separate 32-bit surface
+receives the rotated frame using each surface's pitch, before SDL blits it
+to the hardware display. Game coordinates and inputs are unchanged.
+Compile test_display.c with -DMIYOO_ROTATE_180 to check the handheld path.
+The regression checks every pixel in all four views against the expected
+180-degree mapping. Desktop builds without that define stay upright.

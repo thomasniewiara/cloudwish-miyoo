@@ -12,13 +12,17 @@ int main(void){
   for(int y=0;y<480;y++)for(int x=0;x<640;x++){
    Uint32 a,b;Uint8 ar,ag,ab,br,bg,bb;
    memcpy(&a,(Uint8*)screen->pixels+y*screen->pitch+x*4,4);
+   #ifdef MIYOO_ROTATE_180
+   memcpy(&b,(Uint8*)video->pixels+(479-y)*video->pitch+(639-x)*4,4);
+#else
    memcpy(&b,(Uint8*)video->pixels+y*video->pitch+x*4,4);
+#endif
    SDL_GetRGB(a,screen->format,&ar,&ag,&ab);SDL_GetRGB(b,video->format,&br,&bg,&bb);
    assert(ar==br&&ag==bg&&ab==bb);
   }
   SDL_UnlockSurface(video);SDL_UnlockSurface(screen);
  }
  remove("/tmp/cloudwish-display-test.bmp");
- puts("PASS: separate 32-bit canvas, every presented pixel for meadow, bridge, puzzle and pause");
+ puts("PASS: separate 32-bit canvas, every presented pixel (including configured rotation) for meadow, bridge, puzzle and pause");
  return 0;
 }

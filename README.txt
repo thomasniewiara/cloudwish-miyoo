@@ -1,12 +1,17 @@
-CLOUDWISH KINGDOM — MIYOO DEMO 0.1.1
+CLOUDWISH KINGDOM — MIYOO DEMO 0.1.2
 Target: Miyoo Mini Plus, Onion OS 4.3.1
 Status: compiled ARM hardware-test build. NOT tested on a physical Miyoo.
 
-UPDATE FROM 0.1
+UPDATE FROM 0.1 / 0.1.1
 Shut down the Miyoo, then merge this package's Roms folder into the SD card.
 Replace cloudwish and run.sh when prompted. Do not delete the existing
 Cloudwish folder or its saves folder. This ZIP contains no saved games and
 uses the same save format. Relaunch the existing Cloudwish entry.
+
+ORIENTATION FIX IN 0.1.2
+The native Miyoo display showed version 0.1.1 upside down. This update
+rotates the completed frame 180 degrees before display. Controls, mission
+progress and save format are unchanged. Hardware confirmation is pending.
 
 DISPLAY FIX IN 0.1.1
 The first version could display diagonal, scrambled rows on the handheld.
