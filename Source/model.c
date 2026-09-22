@@ -39,7 +39,8 @@ static const Quest quests[5][7]={
 };
 void defaults(Save *s){memset(s,0,sizeof *s);s->who=3;s->x=320;s->y=355;s->sound=1;}
 int valid_save(const Save *s){
- if(s->island<0||s->island>=6||s->who<0||s->who>3||!isfinite(s->x)||!isfinite(s->y)||s->x<65||s->x>575||s->y<155||s->y>381||s->stars<0||s->stars>310||s->owned<0||s->owned>254||(s->owned&1)||s->furniture<0||s->furniture>63||s->sound<0||s->sound>1)return 0;
+ if(s->island<0||s->island>=6||s->who<0||s->who>3||!isfinite(s->x)||!isfinite(s->y)||s->x<65||s->x>575||s->y<155||s->y>381||s->stars<0||s->stars>460||s->owned<0||s->owned>254||(s->owned&1)||s->furniture<0||s->furniture>63||s->sound<0||s->sound>1)return 0;
+ if(s->companion<0||s->companion>2||s->petlook<0||s->petlook>=LOOKS||(s->petlook&&!(s->owned&(1<<s->petlook)))||s->adventures<0||s->adventures>31||s->secrets<0||s->secrets>31||s->homebits<0||s->homebits>3||s->display<0||s->display>5||(s->display&&!(s->secrets&(1<<(s->display-1))))||s->visitors<0||s->visitors>31||s->voice<0||s->voice>1)return 0;
  for(int i=0;i<5;i++)if(s->progress[i]<0||s->progress[i]>caps[i])return 0;
  for(int i=0;i<4;i++)if(s->look[i]<0||s->look[i]>=LOOKS||(s->look[i]&&!(s->owned&(1<<s->look[i]))))return 0;
  int used=0;for(int i=0;i<6;i++){int n=s->slots[i];if(n<0||n>6)return 0;if(n){if(!(s->furniture&(1<<(n-1)))||(used&(1<<n)))return 0;used|=1<<n;}}
@@ -49,9 +50,10 @@ int write_save(const char *path,const Save *s){
  if(!valid_save(s))return 0;
  char tmp[512];if(snprintf(tmp,sizeof tmp,"%s.tmp",path)>=(int)sizeof tmp)return 0;
  FILE*f=fopen(tmp,"w");if(!f)return 0;
- int ok=fprintf(f,"CW3 %d %d %.2f %.2f %d %d %d %d %d %d %d %d",s->island,s->who,s->x,s->y,s->stars,s->owned,s->look[0],s->look[1],s->look[2],s->look[3],s->furniture,s->sound)>0;
+ int ok=fprintf(f,"CW4 %d %d %.2f %.2f %d %d %d %d %d %d %d %d",s->island,s->who,s->x,s->y,s->stars,s->owned,s->look[0],s->look[1],s->look[2],s->look[3],s->furniture,s->sound)>0;
  for(int i=0;i<5;i++)if(fprintf(f," %d",s->progress[i])<0)ok=0;
  for(int i=0;i<6;i++)if(fprintf(f," %d",s->slots[i])<0)ok=0;
+ if(fprintf(f," %d %d %d %d %d %d %d %d",s->companion,s->petlook,s->adventures,s->secrets,s->homebits,s->display,s->visitors,s->voice)<0)ok=0;
  if(fputc('\n',f)==EOF||fflush(f)||fsync(fileno(f)))ok=0;
  if(fclose(f))ok=0;
  if(!ok){remove(tmp);return 0;}return rename(tmp,path)==0;
@@ -59,10 +61,11 @@ int write_save(const char *path,const Save *s){
 int read_save(const char *path,Save *s){
  Save n;defaults(&n);char tag[8];FILE*f=fopen(path,"r");if(!f)return 0;
  int ok=fscanf(f,"%7s",tag)==1;
- if(ok&&!strcmp(tag,"CW3")){
+ if(ok&&(!strcmp(tag,"CW3")||!strcmp(tag,"CW4"))){
   ok=fscanf(f,"%d %d %f %f %d %d %d %d %d %d %d %d",&n.island,&n.who,&n.x,&n.y,&n.stars,&n.owned,&n.look[0],&n.look[1],&n.look[2],&n.look[3],&n.furniture,&n.sound)==12;
   for(int i=0;i<5;i++)if(fscanf(f,"%d",&n.progress[i])!=1)ok=0;
   for(int i=0;i<6;i++)if(fscanf(f,"%d",&n.slots[i])!=1)ok=0;
+  if(!strcmp(tag,"CW4")&&fscanf(f,"%d %d %d %d %d %d %d %d",&n.companion,&n.petlook,&n.adventures,&n.secrets,&n.homebits,&n.display,&n.visitors,&n.voice)!=8)ok=0;
  }else if(ok&&(!strcmp(tag,"CW1")||!strcmp(tag,"CW2"))){
   ok=fscanf(f,"%d %d %f %f",&n.progress[0],&n.who,&n.x,&n.y)==4;
   if(!strcmp(tag,"CW1")){if(n.progress[0]>=0&&n.progress[0]<=7)n.stars=n.progress[0]*10;else ok=0;}
@@ -108,7 +111,7 @@ int travel(int island){
  if(!unlocked(island)){say("Help the friends on the previous island.");return 0;}
  Save before=g;g.island=island;g.x=320;g.y=375;
  if(!transaction(before))return 0;
- mode=PLAY;reaction_time=1;say(island==5?"A near a circle decorates. X opens the shop.":"Follow the glowing marker. Y gives a hint.");return 1;
+ mode=PLAY;reaction_time=1;if(island<5&&(g.adventures&(1<<island))){say(island==0?"Pip: Welcome back! Our cloud sheep is happy.":island==3?"Bonbon: I love my bow! Pip saved you a picnic.":island==1?"Your flowers wave hello! Thank you for the rain.":"Welcome back! Our moonlight still shines.");return 1;}say(island==5?"A near a circle decorates. X opens the shop.":"Follow the glowing marker. Y gives a hint.");return 1;
 }
 void begin_spell(int who){
  memset(&spell,0,sizeof spell);spell.type=who;mode=PUZZLE;
@@ -120,6 +123,8 @@ void begin_spell(int who){
  snprintf(spell.note,sizeof spell.note,"Take your time. Magic grows with practice.");
 }
 void interact(void){
+ if(g.island<5&&hypotf(g.x-540,g.y-365)<42){start_activity();return;}
+ if(g.island<5&&hypotf(g.x-85,g.y-180)<38){mode=SECRET;return;}
  if(g.island==5){int best=-1;float distance=65;for(int i=0;i<6;i++){float d=hypotf(g.x-slot_x[i],g.y-slot_y[i]);if(d<distance){distance=d;best=i;}}
   if(best>=0){decor_slot=best;choice=g.slots[best];mode=DECOR;}else say("Stand near a circle and press A to decorate.");return;}
  if(fabsf(g.x-85)<24&&fabsf(g.y-300)<24){mode=SHOP;return;}
@@ -147,6 +152,8 @@ void spell_key(SDLKey k){
  }else {chime(0);snprintf(spell.note,sizeof spell.note,"Try another. Y gives a gentle hint.");}
 }
 void handle_key(SDLKey k){
+ idle_help=0;
+ if(mode==ADVENTURES||mode==ACTIVITY||mode==SECRET){adventure_key(k);return;}
  int a=k==SDLK_SPACE,b=k==SDLK_LCTRL;
  if(mode==HELP){if(a||b||k==SDLK_RETURN)mode=PAUSE;return;}
  if(k==SDLK_RETURN||k==SDLK_ESCAPE){if(mode==PAUSE)mode=resume_mode;else{resume_mode=mode;mode=PAUSE;pause_choice=0;}return;}
@@ -161,15 +168,17 @@ void handle_key(SDLKey k){
  if(k==SDLK_t||k==SDLK_BACKSPACE)g.who=(g.who+1)%4;
   if(a){if(tab)buy_furniture(choice);else buy_look(choice);}return;
  }
+ if(b){mode=ADVENTURES;adventure_choice=0;return;}
  if(k==SDLK_RCTRL){mode=MAP;map_choice=g.island;shop_note[0]=0;return;}
  if(k==SDLK_LSHIFT){mode=SHOP;choice=0;tab=0;snprintf(shop_note,sizeof shop_note,"One purchase unlocks a look for all friends.");return;}
  if(k==SDLK_e||k==SDLK_TAB)g.who=(g.who+3)%4;
  if(k==SDLK_t||k==SDLK_BACKSPACE)g.who=(g.who+1)%4;
- if(k==SDLK_LALT){const Quest*q=quest();say(q?q->hint:g.island==5?"A decorates a nearby circle. X buys furniture.":"SELECT opens the map. There is more to explore!");}
+ if(k==SDLK_LALT){speak_hint(0);const Quest*q=quest();say(q?q->hint:g.island==5?"A decorates a nearby circle. X buys furniture.":"SELECT opens the map. There is more to explore!");}
  if(a)interact();
 }
 void tick(float dt,const Uint8 *keys){
- clock_time+=dt;if(toast_time>0)toast_time-=dt;if(reaction_time>0)reaction_time-=dt;moving=0;
+ clock_time+=dt;
+ if(mode==ACTIVITY){idle_help+=dt;if(idle_help>20){idle_help=0;adventure_hint();}}if(toast_time>0)toast_time-=dt;if(reaction_time>0)reaction_time-=dt;moving=0;
  if(mode==PUZZLE){if(spell.reveal>0)spell.reveal-=dt;
   if(spell.type==2&&spell.phase){spell.heat+=dt*.42f;if(!keys[SDLK_SPACE]){
    spell.phase=0;if(spell.heat>=.48f&&spell.heat<=.78f){spell.count++;chime(1);snprintf(spell.note,sizeof spell.note,"Just right! A cozy little glow.");if(spell.count==3)complete_quest();}

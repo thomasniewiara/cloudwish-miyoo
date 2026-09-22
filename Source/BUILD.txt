@@ -1,4 +1,4 @@
-CLOUDWISH MIYOO 0.3 — BUILD AND TEST
+CLOUDWISH MIYOO 0.4 — BUILD AND TEST
 
 Files
   game.h: shared model and declarations
@@ -32,7 +32,7 @@ It tests the same rotated presentation code used in the Miyoo binary.
 
 To build a playable desktop program:
   cd Source
-  cc -std=gnu99 -O2 main.c model.c render.c audio.c $(sdl-config --cflags --libs) -lm -o /tmp/cloudwish-host
+  cc -std=gnu99 -O2 main.c model.c render.c audio.c adventure.c $(sdl-config --cflags --libs) -lm -o /tmp/cloudwish-host
 Run it with the working directory Roms/PORTS/Games/Cloudwish.
 Desktop controls: arrows, Space=A, left Ctrl=B, left Alt=Y, left Shift=X,
 right Ctrl=SELECT, E/T=L1/R1, Tab/Backspace=L2/R2, Enter=START.
@@ -46,7 +46,7 @@ CW1/CW2 are imported without replaying earned rewards. Files are validated
 before use; writes use temp + fflush + fsync + rename. Purchases, travel and
 rewards roll back in-memory state on failed writes. Corrupt existing saves
 cause an exit with a log message rather than being overwritten.
-main.c attempts a one-time pre-0.3-backup.txt before replacing legacy saves.
+main.c attempts a one-time pre-0.4-backup.txt before replacing legacy saves.
 No gameplay saves are included in the distribution.
 
 GRAPHICS AND AUDIO
@@ -69,3 +69,15 @@ https://github.com/OnionUI/Onion/blob/v4.3.1-1/static/build/.tmp_update/runtime.
 https://github.com/OnionUI/Onion/blob/v4.3.1-1/static/build/.tmp_update/script/stop_audioserver.sh
 https://onionui.github.io/docs/ports
 https://github.com/shauninman/union-miyoomini-toolchain
+
+VERSION 0.4
+adventure.c implements companion actions, activities and secret rewards.
+adventure-render.inc extends the existing renderer without changing its
+verified presentation code. CW4 appends eight validated fields to CW3.
+The new regression section covers completions, repeat rewards, all five
+secret gates, home actions, legacy migration, rollback and rendered screens.
+
+Offline hints are PCM mono 22050 Hz WAV files. They were synthesized locally
+with Flite's cmu_us_slt voice. No voice service, network or user recordings
+are used at runtime. generate-hints.py reproduces them with local Flite and
+Python audioop (Python <=3.12). Voice and music have separate saved toggles.

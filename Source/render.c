@@ -117,14 +117,17 @@ static void spell_panel(void){
  }
  text(40,375,spell.note);
 }
+#include "adventure-render.inc"
 void render(void){
- scenery();box(0,0,640,85,58,51,91);char head[80];snprintf(head,sizeof head,"%-18s  STARS: %d",island_names[g.island],g.stars);text(18,7,head);const Quest*q=quest();text(18,37,q?q->title:g.island==5?"Your own cozy corner of the sky":"All friends helped! SELECT explores the sky");
- box(0,408,640,72,58,51,91);snprintf(head,sizeof head,"%s  L/R friend  A magic  START pause",names[g.who]);text(9,411,head);text(9,440,"D-pad move   Y hint   X shop   SELECT map");
+ scenery();adventure_scenery();box(0,0,640,85,58,51,91);char head[80];snprintf(head,sizeof head,"%-18s  STARS: %d",island_names[g.island],g.stars);text(18,7,head);const Quest*q=quest();text(18,37,q?q->title:g.island==5?"Your own cozy corner of the sky":"All friends helped! SELECT explores the sky");
+ box(0,408,640,72,58,51,91);snprintf(head,sizeof head,"%s  L/R friend  A magic  START pause",names[g.who]);text(9,411,head);text(9,440,"B adventures  Y hint  X shop  SELECT map");
  if(mode==PLAY&&toast_time>0){box(5,87,630,59,81,72,117);wrapped(12,90,toast,47);}
+ if(mode==ADVENTURES||mode==ACTIVITY||mode==SECRET)adventure_panel();
  if(mode==SHOP)shop_panel();
  if(mode==MAP)map_panel();
  if(mode==DECOR)decor_panel();
  if(mode==PUZZLE)spell_panel();
+ if((mode==ADVENTURES||mode==ACTIVITY||mode==SECRET)&&toast_time>0){box(20,340,600,65,81,72,117);wrapped(28,342,toast,44);}
  if(mode==PAUSE){panel("A LITTLE CLOUD BREAK");const char*items[]={"Resume","Controls",g.sound?"Sound: on":"Sound: off","Save and quit"};for(int i=0;i<4;i++){char row[70];snprintf(row,sizeof row,"%c %s",pause_choice==i?'>':' ',items[i]);text(75,153+i*43,row);}text(45,356,save_ok?"Your missions and purchases save right away.":"SAVE ERROR: check the SD card.");}
  if(mode==HELP){panel("YOUR SKY ADVENTURE");text(42,135,"D-pad walk     L/R switch magical friend");text(42,175,"A help/cast    B undo or leave a menu");text(42,215,"Y hint/replay  X clothing and furniture");text(42,255,"SELECT map     START pause / sound");text(42,295,"At home: A near a circle to decorate");text(42,355,"A or B returns to your cloud break");}
  SDL_Surface*frame=canvas;
@@ -147,7 +150,7 @@ int init_video(void){
  const char*files[]={"luna","poppy","ember","milo"};for(int i=0;i<4;i++){sprites[i]=load(files[i],1);if(!sprites[i])return 0;}
  font=load("font",1);background=load("meadow",0);if(!font||!background)return 0;
  SDL_ShowCursor(SDL_DISABLE);SDL_EnableKeyRepeat(0,0);char driver[80]={0};SDL_VideoDriverName(driver,sizeof driver);
- fprintf(stderr,"Cloudwish 0.3; video=%s %dx%d bpp=%u pitch=%u\n",driver,video->w,video->h,video->format->BitsPerPixel,video->pitch);
+ fprintf(stderr,"Cloudwish 0.4; video=%s %dx%d bpp=%u pitch=%u\n",driver,video->w,video->h,video->format->BitsPerPixel,video->pitch);
 #ifdef MIYOO_ROTATE_180
  fprintf(stderr,"Presentation rotation: 180 degrees\n");
 #endif

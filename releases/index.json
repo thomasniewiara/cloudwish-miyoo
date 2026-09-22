@@ -33,5 +33,12 @@
     "sha256": "66409ee94bef28883f0297c8bd8e6f239280de04c90339aec74fbf5bb501ebd6",
     "size_bytes": 93644,
     "provenance": "Original released ZIP recovered without modification"
+  },
+  {
+    "version": "0.4",
+    "archive": "releases/v0.4/Cloudwish-Miyoo-Adventure-0.4.zip",
+    "sha256": "c33684b8f4e14ef8cfd45f3581af9acffab9c1fac97ef4921a73e8ac1e314859",
+    "size_bytes": 1717311,
+    "provenance": "Built from the companion adventures source update; all earlier archives unchanged"
   }
 ]

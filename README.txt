@@ -1,7 +1,20 @@
-CLOUDWISH KINGDOM — MIYOO ADVENTURE 0.3
+CLOUDWISH KINGDOM — MIYOO ADVENTURE 0.4
 For Miyoo Mini Plus / Onion OS 4.3.1
 
-WHAT'S NEW
+WHAT'S NEW IN 0.4
+B opens Companions & little adventures. Choose a baby dragon, treasure bunny
+or garden fairy, play island activities, explore secret rooms and dress your
+companion. New activities: D-pad guides sheep; left/right + A turns rain
+channels or crystals, or catches floating picnic supplies. X lets your
+companion help, Y demonstrates the next step. No timer or lost lives.
+
+Five activities each earn an outfit +20 stars once. Five secret rooms each
+earn a treasure +10 stars once. Return to the island to see your help remembered.
+At Cloud Home, place a table/bed first, then use B to arrange a picnic, tuck
+your companion in, invite rescued friends or display a discovered treasure.
+Use B > Spoken hints to enable the bundled offline voice (off by default).
+
+FEATURES FROM 0.3
 - Five adventure islands plus Cloud Home. Rainbow Meadow is joined by
   Fairy Garden, Crystal Peaks, Candy Clouds and Moon Meadow.
 - 23 mission steps total: the original 7 and 16 new missions.
@@ -30,11 +43,11 @@ UPDATE FROM AN EARLIER DEMO
 4. Safely eject the card, start the Miyoo and open the existing Cloudwish
    entry. The updated run.sh handles audio even with an older shortcut.
 
-Existing CW1/CW2 saves are read automatically. CW1 receives credit for old
+Existing CW1/CW2/CW3 saves are read automatically. CW1 receives credit for old
 completed missions; CW2 retains the stars and outfits already purchased.
-The game attempts to keep a pre-0.3-backup.txt copy before first conversion.
-The new CW3 format stores all islands, furniture and sound settings. Older
-builds cannot read CW3; restore your backup if you choose to downgrade.
+The game attempts to keep a pre-0.4-backup.txt copy before first conversion.
+The new CW4 format stores all islands, furniture and sound settings. Older
+builds cannot read CW4; restore your backup if you choose to downgrade.
 This ZIP contains no saves and will not replace your saved game.
 
 FIRST INSTALL
@@ -48,7 +61,7 @@ Expected launcher: /Roms/PORTS/Games/Cloudwish/run.sh
 CONTROLS
 D-pad   Walk, select menu items or puzzle targets
 A       Help, connect, choose, buy, equip, or place furniture
-B       Back; in Luna's puzzle, undo the latest point before leaving
+B       Companions/adventures while walking; back in menus; in Luna's puzzle, undo the latest point before leaving
 Y       Mission hint; puzzle hint (Milo replays the star sequence)
 X       Clothing/furniture shop while exploring
 SELECT  Travel map while exploring
@@ -74,7 +87,7 @@ Meadow. The final Moon task starts a sky celebration.
 Cloud Home is always available from SELECT, even before rescuing Pip.
 
 Meadow missions give 10 stars each; new-island missions give 15. You can
-earn 310 stars altogether; every outfit and decoration together costs 275.
+earn 310 story stars plus 150 new adventure/secret stars; every outfit and decoration together costs 275.
 Rewards are given once per mission. Completed islands remain visitable.
 Press A on a completed island for a happy greeting.
 
@@ -106,7 +119,7 @@ and records the problem in cloudwish.log instead of overwriting it.
 
 VALIDATION AND DEVICE CHECK
 The previous display orientation, gameplay and save system were confirmed
-working by the user on their Miyoo. The 0.3 additions are compiled and host
+working by the user on their Miyoo. The 0.4 additions are compiled and host
 tested, but have not yet been tested on a physical device.
 Host tests cover all 23 mission steps and four puzzles, island locks,
 backward save migration, rewards, purchases, furniture movement, insufficient

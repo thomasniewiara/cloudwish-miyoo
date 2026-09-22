@@ -26,6 +26,7 @@ static void pixel_test(void){
 }
 static void snap(const char*dir,const char*name){render();pixel_test();if(dir){char path[512];snprintf(path,sizeof path,"%s/%s.bmp",dir,name);assert(SDL_SaveBMP(canvas,path)==0);}}
 int main(int argc,char**argv){
+ char asset_dir[1024];assert(getcwd(asset_dir,sizeof asset_dir));
  defaults(&g);assert(init_video());char temp[]="/tmp/cloudwish-test-XXXXXX";assert(mkdtemp(temp));assert(chdir(temp)==0);
  assert(!can_move(320,260)&&!can_move(20,200));g.progress[0]=2;assert(can_move(320,260)&&!can_move(250,260));g.progress[0]=0;
  assert(!unlocked(1)&&!unlocked(4)&&unlocked(5));assert(!travel(4));assert(g.island==0);
@@ -62,7 +63,29 @@ int main(int argc,char**argv){
  /* Menu controls don't move characters; cancel does not buy. */
  mode=PLAY;handle_key(SDLK_LSHIFT);assert(mode==SHOP);float x=g.x;keys[SDLK_RIGHT]=1;tick(.05f,keys);assert(g.x==x);keys[SDLK_RIGHT]=0;int coins=g.stars;handle_key(SDLK_LCTRL);assert(mode==PLAY&&g.stars==coins);
  handle_key(SDLK_RCTRL);assert(mode==MAP);handle_key(SDLK_LCTRL);assert(mode==PLAY);handle_key(SDLK_RETURN);assert(mode==PAUSE);pause_choice=2;handle_key(SDLK_SPACE);assert(g.sound==0);handle_key(SDLK_SPACE);assert(g.sound==1);handle_key(SDLK_LCTRL);assert(mode==PLAY);
+ /* New activities use real controls, reward only once, and import CW3. */
+ Save retained=g;defaults(&g);for(int i=0;i<5;i++)g.progress[i]=caps[i];
+ for(int island=0;island<5;island++){
+  g.island=island;start_activity();assert(mode==ACTIVITY);
+  if(island==0){assert(sheep_step(0,0)==0);int directions[]={1,1,3,3,1,1,3,3};for(int n=0;n<8;n++){SDLKey k=directions[n]==1?SDLK_RIGHT:SDLK_DOWN;adventure_key(k);}}
+  else if(island==3){for(int n=0;n<4;n++){spell.cursor=n;adventure_key(SDLK_SPACE);}}
+  else{int rain[]={1,2,1},crystal[]={1,3,2};int*goal=island==1?rain:crystal;for(int n=0;n<3;n++){spell.cursor=n;for(int j=0;j<goal[n];j++)adventure_key(SDLK_SPACE);}}
+  assert(mode==PLAY&&(g.adventures&(1<<island))&&(g.owned&(1<<activity_rewards[island])));
+  int balance=g.stars;finish_activity();assert(g.stars==balance);
+  g.companion=(secret_power[island]+1)%3;assert(!adventure_discover());g.companion=secret_power[island];assert(adventure_discover());assert(g.stars==balance+10);assert(adventure_discover()&&g.stars==balance+10);
+ }
+ assert(g.stars==150&&g.adventures==31&&g.secrets==31);g.island=5;
+ assert(!adventure_change(4)&&!adventure_change(5));g.furniture=17;g.slots[0]=1;g.slots[1]=5;
+ assert(adventure_change(4)&&adventure_change(5)&&g.homebits==3);assert(adventure_change(6)&&g.display);assert(adventure_change(7)&&g.visitors==31);assert(adventure_change(8)&&g.voice);
+ Save migrated;assert(read_save(SAVE_PATH,&migrated)&&migrated.secrets==31&&migrated.voice==1);
+ FILE*legacy=fopen("cw3.txt","w");fputs("CW3 0 3 320 355 70 0 0 0 0 0 0 1 7 0 0 0 0 0 0 0 0 0 0",legacy);fclose(legacy);
+ assert(read_save("cw3.txt",&migrated)&&migrated.stars==70&&!migrated.secrets&&!migrated.voice);remove("cw3.txt");
+ Save stable=g;remove(SAVE_PATH);rmdir("saves");FILE*block=fopen("saves","w");fclose(block);g.adventures=0;g.island=0;int before_reward=g.stars;finish_activity();assert(!g.adventures&&g.stars==before_reward);remove("saves");mkdir("saves",0755);g=stable;
+ puts("PASS: five adventures, unique rewards, companion locks, secrets, cottage play, CW3 migration and failed-save rollback");
  const char*dir=argc>1?argv[1]:NULL;
+ for(int i=0;i<5;i++){g.island=i;start_activity();char name[40];snprintf(name,sizeof name,"adventure-%d",i);snap(dir,name);mode=SECRET;snprintf(name,sizeof name,"secret-%d",i);snap(dir,name);}
+ mode=ADVENTURES;toast_time=0;snap(dir,"companions");g=retained;
+
  for(int i=0;i<6;i++){g.island=i;mode=PLAY;toast_time=0;char name[32];snprintf(name,sizeof name,"island-%d",i);snap(dir,name);}
  mode=MAP;snap(dir,"map");mode=SHOP;tab=0;choice=4;snap(dir,"outfits");tab=1;choice=3;snap(dir,"furniture");mode=DECOR;choice=1;snap(dir,"decorate");
  g.island=1;g.progress[1]=0;
@@ -72,6 +95,6 @@ int main(int argc,char**argv){
  puts("PASS: all islands, menus, spells and 32 outfit combinations render with correct 180-degree presentation");
  Sint16 samples[22050];audio_enabled(0);audio_callback(NULL,(Uint8*)samples,sizeof samples);for(int i=0;i<22050;i++)assert(samples[i]==0);
  audio_enabled(1);chime(2);audio_callback(NULL,(Uint8*)samples,sizeof samples);long energy=0;for(int i=0;i<22050;i++){assert(abs(samples[i])<5000);energy+=abs(samples[i]);}assert(energy>100000);
- defaults(&g);assert(init_audio());SDL_Delay(80);audio_enabled(0);close_audio();puts("PASS: synthesized music/effects, mute, bounded levels and SDL audio callback");
+ defaults(&g);assert(init_audio());SDL_Delay(80);assert(chdir(asset_dir)==0);audio_enabled(0);g.voice=1;speak_hint(0);audio_callback(NULL,(Uint8*)samples,sizeof samples);energy=0;for(int n=0;n<22050;n++)energy+=abs(samples[n]);assert(energy>10000);g.voice=0;speak_hint(0);audio_enabled(0);audio_callback(NULL,(Uint8*)samples,sizeof samples);for(int n=0;n<22050;n++)assert(samples[n]==0);assert(chdir(temp)==0);close_audio();puts("PASS: synthesized music, offline spoken hints, independent voice toggle and SDL audio callback");
  remove("old.txt");remove("new.txt");remove("bad.txt");remove(SAVE_PATH);rmdir("saves");assert(chdir("/tmp")==0);rmdir(temp);close_video();return 0;
 }

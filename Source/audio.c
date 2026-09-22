@@ -1,6 +1,8 @@
 #include "game.h"
 /* Original synthesized music; no external audio assets. All shared audio
    state is changed under SDL's audio lock after the device is opened. */
+static Uint8 *voice_data=NULL;
+static Uint32 voice_length=0,voice_position=0;
 static int ready=0,enabled=1,effect=0;
 static unsigned long sample_clock=0;
 static float tone_phase=0,effect_phase=0;
@@ -9,6 +11,7 @@ static const float melody[]={261.63f,329.63f,392.f,523.25f,440.f,392.f,329.63f,2
 void audio_callback(void*unused,Uint8*stream,int len){
  (void)unused;Sint16*out=(Sint16*)stream;int samples=len/sizeof(Sint16);memset(stream,0,len);
  for(int i=0;i<samples;i++){
+  if(voice_position+1<voice_length){Sint16 sample;memcpy(&sample,voice_data+voice_position,2);voice_position+=2;out[i]=sample;continue;}
   if(!enabled)continue;
   int note=(sample_clock/11025)%16;float env=1.f-(sample_clock%11025)/11025.f;
   tone_phase+=melody[note]/22050.f;if(tone_phase>=1)tone_phase-=1;
@@ -26,4 +29,12 @@ int init_audio(void){
 }
 void audio_enabled(int on){if(ready)SDL_LockAudio();enabled=on;if(ready)SDL_UnlockAudio();}
 void chime(int kind){if(ready)SDL_LockAudio();effect=kind;effect_left=8800;effect_phase=0;if(ready)SDL_UnlockAudio();}
-void close_audio(void){if(ready){SDL_CloseAudio();ready=0;}}
+void speak_hint(int id){
+ if(!ready)return;
+ if(!g.voice){SDL_LockAudio();voice_position=voice_length;SDL_UnlockAudio();return;}
+ if(id<0||id>7)return;
+ char path[80];snprintf(path,sizeof path,"assets/hint%d.wav",id);SDL_AudioSpec spec;Uint8*data=NULL;Uint32 length=0;if(!SDL_LoadWAV(path,&spec,&data,&length))return;
+ if(spec.freq!=22050||spec.format!=AUDIO_S16SYS||spec.channels!=1){SDL_FreeWAV(data);return;}
+ SDL_LockAudio();if(voice_data)SDL_FreeWAV(voice_data);voice_data=data;voice_length=length;voice_position=0;SDL_UnlockAudio();
+}
+void close_audio(void){if(ready){SDL_CloseAudio();ready=0;if(voice_data)SDL_FreeWAV(voice_data);voice_data=NULL;voice_length=voice_position=0;}}

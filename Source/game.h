@@ -14,9 +14,9 @@
 #define LOOKS 8
 #define FURNITURE 6
 #define SAVE_PATH "saves/slot1.txt"
-typedef struct {int progress[5],island,who;float x,y;int stars,owned,look[4],furniture,slots[6],sound;} Save;
+typedef struct {int progress[5],island,who;float x,y;int stars,owned,look[4],furniture,slots[6],sound,companion,petlook,adventures,secrets,homebits,display,visitors,voice;} Save;
 typedef struct {const char *title,*hint,*thanks;int who,x,y;} Quest;
-typedef enum {PLAY,MAP,SHOP,DECOR,PUZZLE,PAUSE,HELP} Mode;
+typedef enum {PLAY,MAP,SHOP,DECOR,PUZZLE,PAUSE,HELP,ADVENTURES,ACTIVITY,SECRET} Mode;
 typedef struct {int type,cursor,count,round,phase;float heat,reveal;int path[6],length;char note[80];} Spell;
 extern Save g;
 extern Mode mode,resume_mode;
@@ -54,4 +54,18 @@ void close_audio(void);
 void audio_enabled(int on);
 void chime(int kind);
 void audio_callback(void *unused,Uint8 *stream,int len);
+typedef struct {int type,sheep,values[3],caught,hints,demo;} Activity;
+extern Activity activity;
+extern int adventure_choice;
+extern float idle_help;
+extern const char *pet_names[3],*secret_names[5],*treasure_names[5],*activity_names[5];
+extern const int pet_who[3],secret_power[5],activity_rewards[5];
+void adventure_key(SDLKey k);
+void start_activity(void);
+void finish_activity(void);
+void adventure_hint(void);
+int adventure_discover(void);
+int adventure_change(int action);
+int sheep_step(int at,int direction);
+void speak_hint(int id);
 #endif

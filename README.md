@@ -2,7 +2,12 @@
 
 Native SDL 1.2 game for **Miyoo Mini Plus / Onion OS 4.3.1**.
 
-Latest version in this snapshot: **v0.3**.
+Latest version in this snapshot: **v0.4**.
+
+## Companion adventures
+Choose a companion with **B**, explore five new activities and secret rooms, earn outfits, and play at your cottage. Spoken hints are available offline and start switched off.
+
+[Play the website](https://cloudwish-kingdom.thomas823516.chatgpt.site). Saves stay separate on each device.
 
 ## Install
 Download the matching ZIP under [releases](releases/), extract it and merge its
