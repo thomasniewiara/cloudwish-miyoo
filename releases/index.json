@@ -26,5 +26,12 @@
     "sha256": "f14148b5f59bca2c9ddc4647bcd3bedc72d72bfcc40b9f7c793c81275db65255",
     "size_bytes": 75138,
     "provenance": "Original released ZIP recovered without modification"
+  },
+  {
+    "version": "0.3",
+    "archive": "releases/v0.3/Cloudwish-Miyoo-Adventure-0.3.zip",
+    "sha256": "66409ee94bef28883f0297c8bd8e6f239280de04c90339aec74fbf5bb501ebd6",
+    "size_bytes": 93644,
+    "provenance": "Original released ZIP recovered without modification"
   }
 ]

@@ -1,68 +1,71 @@
-Build the native binary on Linux x86_64:
-1. Install the Miyoo toolchain from shauninman/union-miyoomini-toolchain.
-   This build used the archive:
-   https://github.com/shauninman/miyoomini-toolchain-buildroot/releases/download/v0.0.3/miyoomini-toolchain.tar.xz
-   Extract with tar --no-same-owner -xf miyoomini-toolchain.tar.xz -C /opt
-2. Run sh Source/build.sh from the package root.
-   Override MIYOO_TOOLCHAIN if installed somewhere other than
-   /opt/miyoomini-toolchain. SDL headers/libraries come with that toolchain.
-3. The output replaces Roms/PORTS/Games/Cloudwish/cloudwish.
+CLOUDWISH MIYOO 0.3 — BUILD AND TEST
 
-Assets are already prepared; Python is not needed to build or play.
-To regenerate assets from the original Cloudwish PNG folder, install Pillow
-and DejaVu Sans, then run python3 Source/prepare_assets.py /path/to/png/folder
-The four creature images originated in the user's Cloudwish game project.
-The meadow background and Pip are drawn procedurally for this demo.
-The bitmap font is derived from DejaVu Sans; license in FONT-LICENSE.txt.
+Files
+  game.h: shared model and declarations
+  model.c: mission data, input, four spell activities, shop/home, CW3 saves
+  render.c: native software graphics and pitch-aware 180-degree presentation
+  audio.c: original synthesized melody and chimes, SDL audio locking
+  main.c: runtime and old-save backup
+  tests.c: progression, persistence, menu, display and audio regressions
+  build.sh: ARM binary build
+  test-host.sh: host SDL build and regression run
 
-Desktop testing requires SDL 1.2 headers and libraries:
-cc -std=gnu99 -O2 -Wall -Wextra Source/cloudwish.c $(sdl-config --cflags --libs) -lm -o /tmp/cloudwish-host
-/tmp/cloudwish-host --self-test
-cc -std=gnu99 -O2 -Wall -Wextra Source/test_progression.c $(sdl-config --cflags --libs) -lm -o /tmp/cloudwish-test
-/tmp/cloudwish-test
-For a desktop run, change into Roms/PORTS/Games/Cloudwish before launching.
-Desktop keys mirror Onion SDL events:
-Arrows = D-pad; Space = A; Left Ctrl = B; Left Alt = Y;
-E/T = L1/R1; Tab/Backspace = L2/R2; Enter = START.
-Snapshot: SDL_VIDEODRIVER=dummy /tmp/cloudwish-host --screenshot /tmp/frame.bmp
-Optional snapshot arguments: mission index 0–7, then any word for puzzle view.
+ARM BUILD (Linux x86_64)
+Download the toolchain archive from:
+https://github.com/shauninman/miyoomini-toolchain-buildroot/releases/download/v0.0.3/miyoomini-toolchain.tar.xz
+Extract: tar --no-same-owner -xf miyoomini-toolchain.tar.xz -C /opt
+Run: sh Source/build.sh
+MIYOO_TOOLCHAIN can override /opt/miyoomini-toolchain.
+The output replaces Roms/PORTS/Games/Cloudwish/cloudwish.
+GCC 8.3.0; 32-bit ARM EABI5; SDL 1.2, libm and libc dynamically linked.
+-Wall -Wextra -Werror is enabled. The build defines MIYOO_ROTATE_180.
+No runtime shared libraries are bundled.
 
-Key mapping and Ports launcher reference inspected at Onion commit:
-07505ea58c7bba698d6b9220ff43946a43cac76b
-Toolchain repository commit:
-cfcae3083679de59d6600d4ba05676c654b6d24e
-Toolchain GCC: arm-linux-gnueabihf 8.3.0, 2019.03.
-Runtime link paths are established in run.sh. Actual Onion 4.3.1 runtime
-compatibility must still be verified on the target device.
+HOST TEST
+Install SDL 1.2 development files, then:
+  sh Source/test-host.sh
+SDL_CONFIG can select another sdl-config binary. CC selects the compiler.
+For screenshots, first create an absolute directory and pass it as an
+argument to the script. The test runs with SDL dummy video/audio drivers,
+isolates saves in a temporary directory and checks actual presented pixels.
+It tests the same rotated presentation code used in the Miyoo binary.
 
-DISPLAY FIX 0.1.1
-Reference for 32-bit display setup in the user's OS version:
+To build a playable desktop program:
+  cd Source
+  cc -std=gnu99 -O2 main.c model.c render.c audio.c $(sdl-config --cflags --libs) -lm -o /tmp/cloudwish-host
+Run it with the working directory Roms/PORTS/Games/Cloudwish.
+Desktop controls: arrows, Space=A, left Ctrl=B, left Alt=Y, left Shift=X,
+right Ctrl=SELECT, E/T=L1/R1, Tab/Backspace=L2/R2, Enter=START.
+Do not define MIYOO_ROTATE_180 for a normal desktop display.
+Screenshot CLI: --screenshot /tmp/frame.bmp [island 0-5] [shop|map|decor|spell 0-3]
+
+SAVES
+CW3 records location, creature, position, stars, look ownership/equipment,
+furniture ownership, sound setting, five mission counters and six room slots.
+CW1/CW2 are imported without replaying earned rewards. Files are validated
+before use; writes use temp + fflush + fsync + rename. Purchases, travel and
+rewards roll back in-memory state on failed writes. Corrupt existing saves
+cause an exit with a log message rather than being overwritten.
+main.c attempts a one-time pre-0.3-backup.txt before replacing legacy saves.
+No gameplay saves are included in the distribution.
+
+GRAPHICS AND AUDIO
+Keep the user-verified 640x480 32-bit SDL_HWSURFACE and 180-degree rotation.
+Drawing and rotated presentation use separate 32-bit buffers and their own
+row pitches. Each frame is blitted to the video surface before SDL_Flip.
+The four creature images are the existing Cloudwish project artwork.
+Other art, decorations and reactions are drawn procedurally at runtime.
+The bitmap font derives from DejaVu Sans; FONT-LICENSE.txt is included.
+prepare_assets.py is only needed to regenerate the original BMP sprite/font
+assets from the original PNGs; assets are already included for normal builds.
+Music and effects are synthesized in audio.c, with no downloaded recordings.
+Onion's own stop_audioserver.sh handles native port audio setup. The run.sh
+check supports older imported shortcuts as well as new Ports imports.
+Sound failure is nonfatal. Hardware audio remains to be verified.
+
+References used for the existing platform adaptation:
 https://github.com/OnionUI/Onion/blob/v4.3.1-1/src/common/utils/sdl_init.h
-Reference for library search order:
 https://github.com/OnionUI/Onion/blob/v4.3.1-1/static/build/.tmp_update/runtime.sh
-The game draws on its own software canvas and SDL blits it to the hardware
-surface. It does not write directly into framebuffer memory or assume its
-row stride. No private SDL library is shipped.
-
-Host display regression test (run from game's assets parent directory):
-Compile Source/test_display.c with the same host SDL flags as test_progression.
-Run SDL_VIDEODRIVER=dummy /path/to/test_display
-The test compares all RGB pixels of canvas and display across four views.
-
-ORIENTATION FIX 0.1.2
-The Miyoo build now defines MIYOO_ROTATE_180 to correct the upside-down
-native SDL output reported on the user's device. A separate 32-bit surface
-receives the rotated frame using each surface's pitch, before SDL blits it
-to the hardware display. Game coordinates and inputs are unchanged.
-Compile test_display.c with -DMIYOO_ROTATE_180 to check the handheld path.
-The regression checks every pixel in all four views against the expected
-180-degree mapping. Desktop builds without that define stay upright.
-
-SHOP UPDATE 0.2
-CW2 saves append stars, ownership bitmask and four equipped-item indices.
-CW1 import credits completed steps once; purchases and equipment write CW2.
-A failed purchase save rolls the in-memory transaction back. No saves are
-shipped. test_shop.c checks migration, currency, ownership, equipment,
-insufficient funds, repeat reward protection and failed-save rollback.
-Compile it with the same flags as test_progression.c. The display regression
-now also checks the shop with the handheld's 180-degree presentation.
+https://github.com/OnionUI/Onion/blob/v4.3.1-1/static/build/.tmp_update/script/stop_audioserver.sh
+https://onionui.github.io/docs/ports
+https://github.com/shauninman/union-miyoomini-toolchain

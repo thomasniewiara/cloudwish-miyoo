@@ -1,124 +1,131 @@
-CLOUDWISH KINGDOM — MIYOO DEMO 0.2
-Target: Miyoo Mini Plus, Onion OS 4.3.1
-Status: new shop features tested on host. The prior 0.1.2 display, gameplay
-and saves were confirmed working by the user on their Miyoo; 0.2 still
-needs a device check.
+CLOUDWISH KINGDOM — MIYOO ADVENTURE 0.3
+For Miyoo Mini Plus / Onion OS 4.3.1
 
-UPDATE FROM 0.1 / 0.1.1 / 0.1.2
-Shut down the Miyoo, then merge this package's Roms folder into the SD card.
-Replace cloudwish and run.sh when prompted. Do not delete the existing
-Cloudwish folder or its saves folder. This ZIP contains no saved games and
-reads your old save automatically. Relaunch the existing Cloudwish entry.
-Keep a backup of your saves folder if you want to return to an older build;
-older versions cannot read the new shop save format.
+WHAT'S NEW
+- Five adventure islands plus Cloud Home. Rainbow Meadow is joined by
+  Fairy Garden, Crystal Peaks, Candy Clouds and Moon Meadow.
+- 23 mission steps total: the original 7 and 16 new missions.
+- Four different magic activities: rainbow paths, flower patterns, gentle
+  lantern warming and star memory. Hints and retries never cost stars.
+- Walking/idle motion, celebration hops, hearts, sparkles, happy friends and
+  creature-specific dialogue when helping others.
+- Seven wearable accessories: bow, crown, scarf, cape, party hat, wand and
+  petal skirt. Each friend remembers its own outfit. Purchases are shared.
+- Six furniture items to buy and place/move among six spots at Cloud Home:
+  cloud bed, star lamp, flower pot, cozy sofa, tea table and rainbow rug.
+- Original synthesized background melody and magic/reward sounds. Sound
+  can be switched off in the pause menu; the setting is saved.
 
-NEW IN 0.2: THE CLOUD CLOSET
-Earn 10 stars per mission step (70 total). Older saves receive 10 stars
-for every step already completed, once. Press X while exploring, or visit
-the SHOP stall at the left of the meadow and press A.
-Choose with up/down, preview on another friend with L/R, and press A to
-buy and wear. B closes the shop. Purchases unlock the look for all four
-friends; each friend remembers its own outfit. Owned items are free to
-equip again. Original look removes the accessory.
-Rose bow: 10 stars. Sunshine crown: 15 stars. Sky scarf: 20 stars.
-All currency is earned in the game. Purchases/equipment save immediately.
+These are handheld adaptations using simple native graphics and controls,
+not a pixel-for-pixel copy of the browser game. No real-money purchases,
+network connection, browser or separate ROM emulator is needed.
 
-ORIENTATION FIX IN 0.1.2
-The native Miyoo display showed version 0.1.1 upside down. This update
-rotates the completed frame 180 degrees before display. Controls, mission
-progress and save format are unchanged. Hardware confirmation is pending.
+UPDATE FROM AN EARLIER DEMO
+1. Use START > Save and quit, then shut down the Miyoo.
+2. Put its SD card in your computer. Back up the existing folder:
+   Roms/PORTS/Games/Cloudwish/saves
+3. Extract this ZIP. Merge its Roms folder into the SD card's existing Roms
+   folder. Replace the files when prompted. Do NOT delete/replace the whole
+   Roms folder, the whole Cloudwish folder, or your saves folder.
+4. Safely eject the card, start the Miyoo and open the existing Cloudwish
+   entry. The updated run.sh handles audio even with an older shortcut.
 
-DISPLAY FIX IN 0.1.1
-The first version could display diagonal, scrambled rows on the handheld.
-This revision requests a 32-bit hardware display, draws into a separate
-32-bit canvas and blits the complete frame before presenting it. It also
-uses Onion 4.3.1's native library search order instead of preferring the
-alternate Ports SDL library. The log now includes display size, bit depth,
-row pitch, SDL driver and loaded SDL paths.
-These address the suspected rendering mismatch. A physical-device retest
-is still needed to confirm the fix.
+Existing CW1/CW2 saves are read automatically. CW1 receives credit for old
+completed missions; CW2 retains the stars and outfits already purchased.
+The game attempts to keep a pre-0.3-backup.txt copy before first conversion.
+The new CW3 format stores all islands, furniture and sound settings. Older
+builds cannot read CW3; restore your backup if you choose to downgrade.
+This ZIP contains no saves and will not replace your saved game.
 
-INSTALL
-1. Shut down the Miyoo and put its SD card in your computer.
-2. Copy the Roms folder from this package to the root of the SD card,
-   merging it with the existing Roms folder. Do not replace/delete that folder.
-   The result must include:
-   /Roms/PORTS/Games/Cloudwish/cloudwish
-   /Roms/PORTS/Games/Cloudwish/run.sh
-   /Roms/PORTS/Shortcuts/Adventure/Cloudwish.notfound
-3. Safely eject the card and start the Miyoo.
-4. Enable Ports Collection in Apps > Package Manager > Verified if necessary.
-5. Open Games > Ports and run ~Import ports. Then look under Adventure
-   for Cloudwish. Menu labels may vary with your theme.
-6. If the entry does not appear, refresh the game list and reopen Ports.
+FIRST INSTALL
+Enable Ports Collection in Apps > Package Manager > Verified, then copy
+this package's Roms folder to the root of the SD card. Run Games > Ports >
+~Import ports and find Cloudwish under Adventure. Refresh the game list
+if necessary. Theme labels can differ.
+Expected executable: /Roms/PORTS/Games/Cloudwish/cloudwish
+Expected launcher: /Roms/PORTS/Games/Cloudwish/run.sh
 
-PLAY
-D-pad    Walk; select numbered spell points
-A        Talk / use magic / connect selected spell point
-B        Undo last spell point; back out when no points are connected
-X        Open the shop while exploring
-Y        Hint; in a spell, select the next needed point
-L1/R1    Change creature (L2/R2 also supported)
-START    Pause / resume
-Pause    D-pad to choose; A to confirm. Choose Save and quit to exit.
+CONTROLS
+D-pad   Walk, select menu items or puzzle targets
+A       Help, connect, choose, buy, equip, or place furniture
+B       Back; in Luna's puzzle, undo the latest point before leaving
+Y       Mission hint; puzzle hint (Milo replays the star sequence)
+X       Clothing/furniture shop while exploring
+SELECT  Travel map while exploring
+L1/R1   Switch creature; also works when previewing clothes
+L2/R2   Alternate creature-switch buttons
+START   Pause/resume; controls, sound toggle, Save and quit
 
-Follow the golden mission marker. Move close, choose the creature named
-in the quest, and press A. Connect points 1–4 with A; use D-pad and B as
-needed. There are no timers, falling penalties, real-money purchases or online features.
+SHOP
+Up/down chooses an item. Left/right switches outfits and furniture.
+A buys and wears an outfit, or buys a decoration. B leaves. Owned outfits
+can be equipped again for free. Choose Original look to remove an outfit.
+The preview does not spend stars until you press A. Each item unlocks for
+all four creatures. Outfit prices: 10, 15, 20, 25, 25, 30, 30 stars.
+Every furniture item costs 20 stars. Furniture placement is always free.
 
-MISSION ROUTE
-Milo reveals the hidden stars. Luna makes the rainbow bridge. Cross its
-center to find Pip, press A, and walk back to the HOME marker with Pip.
-Then Ember lights the lantern, Poppy welcomes Pip with flowers, and Milo
-brightens the sky. Visit Pip again after finishing for a happy greeting.
+ISLANDS AND MISSIONS
+Follow the glowing mission marker; use the creature named in the quest.
+The original Rainbow Meadow sequence includes Pip's rescue. Return Pip
+home to unlock Fairy Garden (you can finish Meadow's other tasks later).
+Finish all four Fairy Garden tasks to open Crystal Peaks, then all four
+Peak tasks to open Candy Clouds, then all four Candy tasks to open Moon
+Meadow. The final Moon task starts a sky celebration.
+Cloud Home is always available from SELECT, even before rescuing Pip.
 
-WHAT IS INCLUDED
-Four original Cloudwish creature sprites, a simplified Rainbow Meadow,
-seven mission steps, four-point magic interactions, a shop and local saves.
-This is a small native adaptation, not the full browser game or a ROM file.
-Magic interactions share the same point-connection mechanic in this demo.
-The shop and three wearable accessories are included. Other islands and
-audio are not included yet.
+Meadow missions give 10 stars each; new-island missions give 15. You can
+earn 310 stars altogether; every outfit and decoration together costs 275.
+Rewards are given once per mission. Completed islands remain visitable.
+Press A on a completed island for a happy greeting.
 
-SAVES
-Autosaves after each completed mission, outfit purchase/equip, and Save and quit.
-Save file: Roms/PORTS/Games/Cloudwish/saves/slot1.txt
-Use Save and quit before turning off the device. Mid-puzzle progress is
-not saved. Browser saves and Onion emulator save states are separate.
-To start over, exit and rename slot1.txt on your computer to keep a backup.
-A save-error message means the card may be full or unwritable.
+LUNA: Use the D-pad to select numbered points on a 3x3 rainbow grid. A
+connects the next point. B undoes a point. Y points to the next number.
+POPPY: Pick the flower that completes the repeating pattern. Three patterns
+make the flowers bloom. Shapes also identify the choices; Y offers a hint.
+EMBER: Hold A to build warmth, then release while the marker is in the gold
+band. Warm three lights. Too warm/too cool? Try again, with no penalty.
+MILO: Watch four stars glow in order. Then use D-pad and A to repeat the
+sequence. Y replays it from the beginning. There is no response deadline.
 
-FIRST DEVICE TEST (about 5 minutes)
-- Does the game open with a readable, correctly oriented 640x480 screen?
-- Do D-pad, A, B, Y and both shoulder-button pairs match the controls above?
-- Can Milo reveal stars and Luna open the bridge?
-- Can you reach Pip, escort Pip home, and finish all three follow-up tasks?
-- Does Save and quit return to Onion, and does relaunch restore progress?
-Frame pacing, hardware button behavior, launcher integration and power/menu
-interactions still require this physical-device check. Use START to exit;
-GameSwitcher/suspend behavior is not claimed or implemented by this demo.
+DECORATING
+Visit Cloud Home with SELECT. Stand near one of the six floor circles and
+press A. Choose an owned decoration and press A to place it. Placing an
+item already elsewhere moves it to the new spot. Replaced items remain
+owned. Empty space removes an item without losing it. X outside this menu
+opens the shop. Your room arrangement saves as soon as you change it.
 
-TROUBLESHOOTING
-If it returns to Onion immediately, send the contents of:
-Roms/PORTS/Games/Cloudwish/cloudwish.log
-If that file is absent, confirm Ports is installed and the exact paths above.
-Also tell us whether you saw a black screen or an error. No OS upgrade is
-required by these instructions. Don't change firmware to troubleshoot this
-untested first build.
+SAVES AND QUITTING
+Progress saves after every mission, purchase, outfit change, decoration,
+island trip and sound-setting change. Use START > Save and quit before
+turning off the device. Mid-puzzle progress is not saved. Native ports do
+not use RetroArch save states; GameSwitcher/suspend behavior is not claimed.
+Save: Roms/PORTS/Games/Cloudwish/saves/slot1.txt
+If saving fails, transactions are rolled back and the game displays an
+error. Check SD free space. An unreadable save is preserved; the game exits
+and records the problem in cloudwish.log instead of overwriting it.
 
-BUILD / VALIDATION
-Source and rebuild instructions are in Source/. The package contains a
-compiled 32-bit ARM EABI5 Linux executable, dynamically linked to SDL 1.2,
-libm and libc supplied by the device/Onion. No third-party shared libraries
-are bundled. No overclock setting is enabled; the game caps at about 30 fps.
-Host tests passed for save roundtrip, malformed saves, bridge restrictions,
-all mission steps, creature gating, wrong spell point, undo and save/quit.
-A pixel-by-pixel display-copy test passed on the host for the meadow, bridge,
-puzzle and pause views. Screen layouts were inspected through host SDL's dummy video driver.
-These checks do not prove that the binary runs on the physical handheld.
+VALIDATION AND DEVICE CHECK
+The previous display orientation, gameplay and save system were confirmed
+working by the user on their Miyoo. The 0.3 additions are compiled and host
+tested, but have not yet been tested on a physical device.
+Host tests cover all 23 mission steps and four puzzles, island locks,
+backward save migration, rewards, purchases, furniture movement, insufficient
+funds, failed-save rollback, menus, 32 outfit/creature combinations, all new
+screens and the 180-degree display copy. Audio tests verify generated output,
+mute, bounded amplitude and the SDL audio callback using a dummy device.
+Actual sound output, volume and performance need the physical Miyoo check.
 
-References:
-https://onionui.github.io/docs/ports
-https://github.com/OnionUI/Onion
-https://github.com/OnionUI/Ports-Collection
-https://github.com/shauninman/union-miyoomini-toolchain
+TRY ON THE MIYOO
+- Use SELECT to visit Fairy Garden (if Pip is already home).
+- Complete one flower puzzle and one lantern-warming task.
+- Buy furniture with X, then visit Cloud Home and place it with A.
+- Toggle Sound from START, then save/quit and reopen.
+- Confirm island progress, outfit, stars and room arrangement return.
+
+If it does not launch, looks wrong, or has no sound, send cloudwish.log from
+Roms/PORTS/Games/Cloudwish and describe what appeared. If audio cannot open,
+the game continues silently. Use the device's volume controls as usual.
+
+The Source folder includes rebuild instructions and tests. No toolchain or
+third-party runtime libraries are bundled; the build uses Onion's native
+SDL 1.2, libc and libm. No overclocking is enabled.

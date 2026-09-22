@@ -1,9 +1,9 @@
 #!/bin/sh
-GameName="Cloudwish Kingdom Demo"
+GameName="Cloudwish Kingdom"
 GameDir="Cloudwish"
 GameExecutable="run.sh"
 GameDataFile="cloudwish"
-KillAudioserver=0
+KillAudioserver=1
 PerformanceMode=0
 Arguments=""
 /mnt/SDCARD/Emu/PORTS/launch_standalone.sh "$GameName" "$GameDir" "$GameExecutable" "$Arguments" "$GameDataFile" "$KillAudioserver" "$PerformanceMode"
